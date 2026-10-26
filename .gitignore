@@ -10,3 +10,15 @@ glamhub-backend/models/detectra-v3/model.onnx
 
 .github/modernize/
 .claude/
+
+tools/seed-demo/faces/
+
+tools/seed-demo/.env
+tools/seed-demo/portfolio/
+
+tools/seed-demo/cand/
+tools/seed-demo/candidates*.json
+tools/seed-demo/shortlist*.json
+tools/seed-demo/accepted.json
+tools/seed-demo/*.err
+tools/seed-demo/node_modules/

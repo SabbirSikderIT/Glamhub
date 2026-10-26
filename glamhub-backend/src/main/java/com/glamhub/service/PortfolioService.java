@@ -120,7 +120,15 @@ public class PortfolioService {
 
     /** Recent verified portfolio photos from any artist, for the home page animation. */
     public List<PortfolioDto> showcase(int limit) {
-        return images.recentVerified(PageRequest.of(0, Math.max(1, Math.min(limit, 40)))).stream().map(this::toDto).toList();
+        int n = Math.max(1, Math.min(limit, 40));
+        List<PortfolioImage> recent = new java.util.ArrayList<>(images.recentVerified(PageRequest.of(0, 400)));
+        java.util.Collections.shuffle(recent);
+        // Spread across artists: at most one photo per artist first, then top up if there are fewer artists than slots.
+        java.util.Set<Long> artists = new java.util.HashSet<>();
+        List<PortfolioImage> picked = new java.util.ArrayList<>();
+        for (PortfolioImage i : recent) if (picked.size() < n && artists.add(i.getArtist().getId())) picked.add(i);
+        for (PortfolioImage i : recent) if (picked.size() < n && !picked.contains(i)) picked.add(i);
+        return picked.stream().map(this::toDto).toList();
     }
 
     @Transactional

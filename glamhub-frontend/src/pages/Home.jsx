@@ -20,7 +20,7 @@ export default function Home() {
 
   useEffect(() => {
     getDistricts().then(setDistricts).catch(() => {})
-    getShowcase(10).then(setShowcase).catch(() => {})
+    getShowcase(16).then(setShowcase).catch(() => {})
     searchArtists({ size: 6 }).then((r) => setFeatured(r.items)).catch(() => {})
   }, [])
 
@@ -33,18 +33,12 @@ export default function Home() {
     nav(`/search?${p}`)
   }
 
-  // Real, screened portfolio photos are mixed in with the illustrated looks.
+  // Only real, screened portfolio photos are shown. The illustrated looks are used just as a fallback
+  // while no artist has published a photo yet.
   const slides = useMemo(() => {
-    const art = Object.entries(LOOK_PRESETS).map(([preset, p]) => ({ type: 'art', preset, caption: p.label }))
-    const photos = showcase.map((s) => ({ type: 'photo', url: s.imageUrl, caption: s.caption || `${CATEGORIES[s.category] || 'Makeup'} look`, artist: s.artistName }))
-    const out = []
-    for (let i = 0; i < Math.max(art.length, photos.length); i++) {
-      if (art[i]) out.push(art[i])
-      if (photos[i]) out.push(photos[i])
-    }
-    return out
+    if (showcase.length === 0) return Object.entries(LOOK_PRESETS).map(([preset, p]) => ({ type: 'art', preset, caption: p.label }))
+    return showcase.map((s) => ({ type: 'photo', url: s.imageUrl, caption: s.caption || `${CATEGORIES[s.category] || 'Makeup'} look`, artist: s.artistName }))
   }, [showcase])
-
   return (
     <div>
       {/* hero */}
