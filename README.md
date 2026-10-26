@@ -1,4 +1,4 @@
-<div align="center">
+﻿<div align="center">
 
 # 💄 GlamHub
 
@@ -14,15 +14,12 @@ A full-stack marketplace where clients discover verified makeup artists by distr
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
 ![Tests](https://img.shields.io/badge/backend_tests-31_passing-brightgreen)
 
-![GlamHub home page](docs/screenshots/home.png)
-
 </div>
 
 ---
 
 ## Table of contents
 - [Features](#features)
-- [Screenshots](#screenshots)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
 - [Getting started](#getting-started)
@@ -60,16 +57,6 @@ A full-stack marketplace where clients discover verified makeup artists by distr
 - Girly, rose-and-lavender design system with a hand-designed **dark mode**, animated hero scene, looks gallery, "behind the brush" process animation, and a credits section.
 - Responsive from phone to wide desktop; respects `prefers-reduced-motion`.
 
-## Screenshots
-
-| Looks guide | Colour palettes |
-|---|---|
-| ![Makeup looks](docs/screenshots/looks.png) | ![Suggestions](docs/screenshots/suggestions.png) |
-
-| Dark mode | Mobile |
-|---|---|
-| ![Dark mode](docs/screenshots/home-dark.png) | <img src="docs/screenshots/mobile.png" width="260" alt="Mobile home"> |
-
 ## Tech stack
 
 | Layer | Technology |
@@ -89,8 +76,7 @@ GlamHub/
 ├── glamhub-frontend/     React single-page app (Vite)            → http://localhost:5180
 ├── glamhub-backend/      Spring Boot REST API                    → http://localhost:8080
 │   └── models/detectra-v3/   local AI-image detector (ONNX)
-├── glamhub-database/     docker-compose.yml + schema snapshot    → localhost:5440
-└── docs/screenshots/
+└── glamhub-database/     docker-compose.yml + schema snapshot    → localhost:5440
 ```
 
 Backend layering: `controller → service → repository → PostgreSQL`, DTOs at every API boundary, one global exception handler returning `{timestamp, status, message}`.
@@ -142,9 +128,11 @@ npm run dev
 ```
 Open **http://localhost:5180**.
 
-### Default staff login
-`http://localhost:5180/admin/login` → `admin@glamhub.com` / `Admin@12345`
-This main-admin account is seeded on first start. **Change `MAIN_ADMIN_PASSWORD` before deploying anywhere shared.**
+### Main admin account
+On first start the backend creates one main-admin account from the `MAIN_ADMIN_EMAIL` and `MAIN_ADMIN_PASSWORD` settings (see the Configuration table). **Set your own values before the first run**, then sign in at `/admin/login` on the frontend.
+
+### Optional: demo data
+`tools/seed-demo/` contains scripts that fill the site with demo makeup artists covering every district, plus sample portfolio photos, through the normal API. See `tools/seed-demo/README.md`. Demo data is for presentations only; do not use it in production.
 
 ## Configuration
 
@@ -152,9 +140,9 @@ Settings live in `glamhub-backend/src/main/resources/application.yml` and can be
 
 | Setting (env var) | Default | Purpose |
 |---|---|---|
-| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | `jdbc:postgresql://localhost:5440/glamhub`, `postgres`, `postgres` | Database |
-| `JWT_SECRET`, `JWT_EXPIRATION_MS` | dev placeholder, 24 h | Token signing — **override in production** |
-| `MAIN_ADMIN_EMAIL`, `MAIN_ADMIN_PASSWORD` | `admin@glamhub.com`, `Admin@12345` | Seeded main admin |
+| `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` | local Docker database on port 5440 (see `application.yml`) | Database connection — **use your own credentials outside local development** |
+| `JWT_SECRET`, `JWT_EXPIRATION_MS` | development placeholder, 24 h | Token signing — **override in production** |
+| `MAIN_ADMIN_EMAIL`, `MAIN_ADMIN_PASSWORD` | built-in development values | Seeded main admin account — **always override** |
 | `APP_BASE_URL`, `APP_FRONTEND_URL` | `http://localhost:8080`, `http://localhost:5180` | URLs used in QR codes, upload links and payment redirects |
 | `UPLOAD_DIR` | `uploads/portfolio` | Where photos are stored |
 | `SSLCOMMERZ_STORE_ID`, `SSLCOMMERZ_STORE_PASSWORD`, `SSLCOMMERZ_SANDBOX` | empty, empty, `true` | Payments |

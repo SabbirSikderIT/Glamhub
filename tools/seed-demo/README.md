@@ -10,7 +10,7 @@ About 65% are marked "verified" by the admin. Everything goes through the real A
     node seed.mjs sheet     # list the planned artists
     node seed.mjs clean     # delete every demo artist (emails ending @glamhub-demo.com)
 
-Demo artist login: any demo.<first>.<last>@glamhub-demo.com with password Demo@12345.
+Demo artists use the email pattern `demo.<first>.<last>@glamhub-demo.com`; the shared demo password is set by `PASSWORD` at the top of `seed.mjs`.
 Names are generated, deterministic, and unrelated to real people. No phone numbers are set. No reviews or ratings are invented.
 
 ## Photo credit
