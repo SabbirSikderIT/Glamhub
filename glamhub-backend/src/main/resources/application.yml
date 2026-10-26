@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: glamhub
+  config:
+    import: optional:file:local.properties
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5440/glamhub}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: 15MB
+      max-request-size: 20MB
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+
+server:
+  port: 8080
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8080}
+  frontend-url: ${APP_FRONTEND_URL:http://localhost:5180}
+  upload-dir: ${UPLOAD_DIR:uploads/portfolio}
+  mail-from: ${MAIL_FROM:${MAIL_USERNAME:}}
+  main-admin-email: ${MAIN_ADMIN_EMAIL:admin@glamhub.com}
+  main-admin-password: ${MAIN_ADMIN_PASSWORD:Admin@12345}
+  jwt:
+    secret: ${JWT_SECRET:glamhub-dev-secret-change-me-glamhub-dev-secret-change-me}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-2.0-flash}
+  groq:
+    api-key: ${GROQ_API_KEY:}
+    model: ${GROQ_MODEL:openai/gpt-oss-120b}
+    transcription-model: ${GROQ_TRANSCRIPTION_MODEL:whisper-large-v3-turbo}
+  aiornot:
+    api-key: ${AIORNOT_API_KEY:}
+  detectra:
+    model-path: ${DETECTRA_MODEL_PATH:models/detectra-v3/model.onnx}
+    # Probability (0..1) at or above which an upload is rejected as AI-generated.
+    # 0.50 = same as the model's own "ai" verdict. Rejections are visible to the artist and reversible by an admin.
+    reject-threshold: ${DETECTRA_REJECT_THRESHOLD:0.50}
+  duplicate:
+    max-distance: ${DUPLICATE_MAX_DISTANCE:6}
+  sslcommerz:
+    store-id: ${SSLCOMMERZ_STORE_ID:}
+    store-password: ${SSLCOMMERZ_STORE_PASSWORD:}
+    sandbox: ${SSLCOMMERZ_SANDBOX:true}
+  sms:
+    textbelt-key: ${TEXTBELT_API_KEY:textbelt}

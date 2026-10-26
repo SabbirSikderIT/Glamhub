@@ -1,0 +1,12 @@
+node_modules/
+dist/
+target/
+uploads/
+*.log
+.env
+.vscode/
+glamhub-backend/local.properties
+glamhub-backend/models/detectra-v3/model.onnx
+
+.github/modernize/
+.claude/

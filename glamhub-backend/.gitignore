@@ -1,0 +1,5 @@
+target/
+local.properties
+uploads/
+models/detectra-v3/model.onnx
+*.log

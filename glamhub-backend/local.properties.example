@@ -1,0 +1,11 @@
+# Copy to local.properties (git-ignored) and fill in your own keys. Every key is optional.
+app.aiornot.api-key=
+app.sslcommerz.store-id=
+app.sslcommerz.store-password=
+app.sslcommerz.sandbox=true
+app.gemini.api-key=
+app.groq.api-key=
+# Gmail app password + the Gmail address that owns it
+spring.mail.password=
+spring.mail.username=
+app.mail-from=
