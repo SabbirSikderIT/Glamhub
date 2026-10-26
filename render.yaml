@@ -1,0 +1,55 @@
+# Render Blueprint: New + > Blueprint, pick this repository. Values marked sync:false are asked for in the dashboard.
+services:
+  - type: web
+    name: glamhub-backend
+    runtime: docker
+    dockerfilePath: ./glamhub-backend/Dockerfile
+    dockerContext: ./glamhub-backend
+    plan: free
+    healthCheckPath: /api/palettes
+    autoDeploy: true
+    envVars:
+      # --- database (Supabase "Session pooler" connection, see glamhub-database/README.md) ---
+      - key: DB_URL            # e.g. jdbc:postgresql://aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require
+        sync: false
+      - key: DB_USERNAME       # postgres.<project-ref>
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # --- security ---
+      - key: JWT_SECRET
+        generateValue: true
+      - key: MAIN_ADMIN_EMAIL
+        sync: false
+      - key: MAIN_ADMIN_PASSWORD
+        sync: false
+      # --- public URLs ---
+      - key: APP_BASE_URL      # this service's own URL, e.g. https://glamhub-backend.onrender.com
+        sync: false
+      - key: APP_FRONTEND_URL  # the Vercel URL, e.g. https://glamhub.vercel.app
+        sync: false
+      - key: CORS_ORIGINS      # optional extra origins, comma separated
+        sync: false
+      # --- image storage ---
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: CLOUDINARY_FOLDER
+        value: Glamcloud
+      # --- payments (SSLCommerz sandbox) ---
+      - key: SSLCOMMERZ_STORE_ID
+        sync: false
+      - key: SSLCOMMERZ_STORE_PASSWORD
+        sync: false
+      - key: SSLCOMMERZ_SANDBOX
+        value: "true"
+      # --- AI (all optional) ---
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: AIORNOT_API_KEY
+        sync: false

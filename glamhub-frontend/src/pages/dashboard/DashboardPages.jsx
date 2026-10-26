@@ -7,6 +7,7 @@ import { DeleteAccountSection, ProfilePhotoUploader } from '../../components/Acc
 import { Empty, ErrorBox, Field, Loading, Modal, Notice, StarRating } from '../../components/Widgets.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { BUDGETS, CATEGORIES, STATUS_TINT, money, prettyDate, toDateStr } from '../../utils/format.js'
+import { optimize } from '../../utils/cdn.js'
 import {
   createPackage, deletePackage, deletePortfolio, errorMessage, getArtistAvailability, getArtistBookings, getBadgeStatus,
   getBookingQr, getDistricts, getMyArtist, getMyPackages, getMyPortfolio, getMyReviews, purchaseBadge, replyToReview,
@@ -113,7 +114,7 @@ export function DashPortfolio() {
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
           {data.map((p) => (
             <figure key={p.id} className="card overflow-hidden">
-              <img src={p.imageUrl} alt={p.caption || 'Portfolio photo'} className="aspect-[4/5] w-full object-cover" loading="lazy" />
+              <img src={optimize(p.imageUrl, 500)} alt={p.caption || 'Portfolio photo'} className="aspect-[4/5] w-full object-cover" loading="lazy" />
               <figcaption className="space-y-2 p-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className={`chip ${STATUS_TINT[p.verificationStatus]}`}>{p.verificationStatus === 'VERIFIED' ? 'Live' : p.verificationStatus === 'FLAGGED' ? 'Rejected' : 'In review'}</span>

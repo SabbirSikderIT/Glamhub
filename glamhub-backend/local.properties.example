@@ -9,3 +9,9 @@ app.groq.api-key=
 spring.mail.password=
 spring.mail.username=
 app.mail-from=
+
+# Cloudinary image storage (leave empty to keep storing uploads on local disk)
+app.cloudinary.cloud-name=
+app.cloudinary.api-key=
+app.cloudinary.api-secret=
+app.cloudinary.folder=Glamcloud

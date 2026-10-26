@@ -25,6 +25,7 @@ A full-stack marketplace where clients discover verified makeup artists by distr
 - [Getting started](#getting-started)
 - [Configuration](#configuration)
 - [How the key flows work](#how-the-key-flows-work)
+- [Deployment](#deployment-vercel--render--supabase)
 - [Security notes](#security-notes)
 - [Testing](#testing)
 - [API overview](#api-overview)
@@ -144,7 +145,10 @@ Settings live in `glamhub-backend/src/main/resources/application.yml` and can be
 | `JWT_SECRET`, `JWT_EXPIRATION_MS` | development placeholder, 24 h | Token signing — **override in production** |
 | `MAIN_ADMIN_EMAIL`, `MAIN_ADMIN_PASSWORD` | built-in development values | Seeded main admin account — **always override** |
 | `APP_BASE_URL`, `APP_FRONTEND_URL` | `http://localhost:8080`, `http://localhost:5180` | URLs used in QR codes, upload links and payment redirects |
-| `UPLOAD_DIR` | `uploads/portfolio` | Where photos are stored |
+| `UPLOAD_DIR` | `uploads/portfolio` | Local fallback folder, used only when Cloudinary is not configured |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`, `CLOUDINARY_FOLDER` | empty, empty, empty, `Glamcloud` | Cloudinary image storage. When set, every uploaded image (portfolio, profile and look photos) is stored in that Cloudinary folder and served from Cloudinary. Locally you can put them in `glamhub-backend/local.properties` (git-ignored) as `app.cloudinary.*`; the API secret stays on the server. |
+| `PORT` | `8080` | HTTP port. Hosting platforms such as Render set this automatically |
+| `CORS_ORIGINS` | empty | Extra browser origins allowed to call the API (comma separated). `APP_FRONTEND_URL` is always allowed |
 | `SSLCOMMERZ_STORE_ID`, `SSLCOMMERZ_STORE_PASSWORD`, `SSLCOMMERZ_SANDBOX` | empty, empty, `true` | Payments |
 | `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | empty | Password-reset and booking emails (Gmail app password) |
 | `GROQ_API_KEY`, `GEMINI_API_KEY` | empty | AI chat, voice and widget |
@@ -171,10 +175,33 @@ The browser redirect from the gateway is treated only as a hint. The backend re-
 ### AI screening of portfolio uploads
 Every artist upload goes through, in order: file-signature check → EXIF read → **Detectra v3** on-device AI-image detection (photos at or above the reject threshold are held back with a plain-language reason) → **duplicate detection** (SHA-256 for exact copies, a DCT perceptual hash for resized/re-encoded copies) → published. If the model is unavailable, the photo waits for manual review — an unscreened upload is never auto-published. Admins can approve, reject, or run an AI-or-Not deep check at any time.
 
+## Deployment (Vercel + Render + Supabase)
+
+| Part | Host | Folder | Configuration |
+|---|---|---|---|
+| Frontend | Vercel | `glamhub-frontend` | `vercel.json` (single-page-app routing) |
+| Backend API | Render (Docker) | `glamhub-backend` | `render.yaml` and `glamhub-backend/Dockerfile` |
+| Database | Supabase (PostgreSQL) | `glamhub-database` | `schema.sql`, `supabase-security.sql` |
+| Images | Cloudinary | n/a | folder set by `CLOUDINARY_FOLDER` |
+
+Deploy in this order, because each step needs a value from the previous one:
+
+1. **Supabase** - create the project, run `schema.sql` and `supabase-security.sql`, and copy the Session-pooler connection details. See `glamhub-database/README.md`.
+2. **Render** - New > Blueprint, select this repository. Render reads `render.yaml`; fill in the values it asks for (database, Cloudinary, admin account and the optional AI and payment keys). Leave `APP_FRONTEND_URL` empty for now. After the first deploy, copy the service URL (for example `https://glamhub-backend.onrender.com`) and set it as `APP_BASE_URL`.
+3. **Vercel** - Import the repository, set **Root Directory** to `glamhub-frontend`, and add the environment variable `VITE_API_BASE_URL` = `https://<your-render-service>.onrender.com/api`. Deploy.
+4. **Back to Render** - set `APP_FRONTEND_URL` to the Vercel URL (no trailing slash) so booking QR codes, payment redirects and browser access (CORS) point at the real site, then redeploy.
+
+Notes for the free plans:
+- A free Render service sleeps after about 15 minutes without traffic, so the first request after a pause can take a minute or more.
+- Render's free plan blocks outgoing email (SMTP), so email codes cannot be sent there. The app then shows the verification code on screen instead, and other methods (QR code, Google Authenticator) keep working.
+- The free instance has 512 MB of memory. If the AI image check runs out of memory, set `DETECTRA_MODEL_PATH` to a path that does not exist; uploads are then held for manual review by an admin instead of being auto-checked.
+- Change `MAIN_ADMIN_PASSWORD`, and use your own `JWT_SECRET` (Render generates one for you with the blueprint).
+- SSLCommerz runs in sandbox mode. Payment return URLs use `APP_BASE_URL`, so set it correctly before testing payments.
 ## Security notes
 - Passwords are **BCrypt-hashed only** — no plaintext copies anywhere.
 - Per-endpoint role rules in `SecurityConfig`, plus a service-level **main-admin guard** for the most sensitive actions.
 - Guest bookings are protected by an unguessable **access key**; reviews require it too.
+- Images are stored on Cloudinary through signed server-side requests; the API secret is never sent to the browser.
 - Uploads are validated by real file signature (JPG/PNG), not just the declared content type.
 - OTP codes are only shown on screen when SMS/email delivery actually fails.
 - Never commit `local.properties`; it holds your API keys. Rotate any key that has ever been shared in plain text.

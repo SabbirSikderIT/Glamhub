@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import FaceArt from './FaceArt.jsx'
+import { optimize } from '../utils/cdn.js'
 
 /**
  * A stack of look "cards" that change with a rotating set of transition styles (see .flip-in-* in index.css).
@@ -32,7 +33,7 @@ export default function PhotoFlipBook({ slides, interval = 3800, className = '' 
 
   const render = (s) =>
     s.type === 'photo' ? (
-      <img src={s.url} alt={s.caption || 'Makeup look by a GlamHub artist'} className="h-full w-full object-cover" loading="lazy" />
+      <img src={optimize(s.url, 900)} alt={s.caption || 'Makeup look by a GlamHub artist'} className="h-full w-full object-cover" loading="lazy" />
     ) : (
       <FaceArt preset={s.preset} className="h-full w-full object-cover" stage={4} />
     )

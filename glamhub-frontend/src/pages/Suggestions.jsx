@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import FaceArt from '../components/FaceArt.jsx'
 import { Empty, ErrorBox, Loading } from '../components/Widgets.jsx'
 import { errorMessage, getLooks, getPalettes } from '../services/api.js'
+import { optimize } from '../utils/cdn.js'
 
 const LEVELS = { LIGHT: { label: 'Light', emoji: '🌸', blurb: 'Natural, breathable, skin-first.' }, MEDIUM: { label: 'Medium', emoji: '💖', blurb: 'Polished, defined, camera-friendly.' }, HEAVY: { label: 'Heavy', emoji: '👑', blurb: 'Full glam, long-wear, dramatic.' } }
 const SKIN = { ALL: 'All skin tones', FAIR: 'Fair', MEDIUM: 'Medium', DEEP: 'Deep' }
@@ -99,7 +100,7 @@ export default function Suggestions() {
               {shownLooks.map((l) => (
                 <article key={l.id} className="card grid items-center gap-6 overflow-hidden p-5 md:grid-cols-[260px_1fr]">
                   <div className="overflow-hidden rounded-2xl">
-                    {l.imageUrl ? <img src={l.imageUrl} alt={l.title} className="aspect-[5/6] w-full object-cover" /> :
+                    {l.imageUrl ? <img src={optimize(l.imageUrl, 600)} alt={l.title} className="aspect-[5/6] w-full object-cover" /> :
                       <FaceArt preset={l.level === 'LIGHT' ? 'natural' : l.level === 'MEDIUM' ? 'party' : 'bridal'} look={{ lip: l.lipColor || undefined, eye: l.eyeColor || undefined, blush: l.blushColor || undefined, intensity: l.level === 'LIGHT' ? 0.4 : l.level === 'MEDIUM' ? 0.8 : 1 }} className="aspect-[5/6] w-full" title={l.title} />}
                   </div>
                   <div>

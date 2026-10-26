@@ -192,15 +192,5 @@ public class PortfolioService {
         return toAdminDto(images.save(i));
     }
 
-    private byte[] readStored(String url) {
-        try {
-            String name = url.substring(url.lastIndexOf('/') + 1);
-            return java.nio.file.Files.readAllBytes(java.nio.file.Paths.get(uploadDir).toAbsolutePath().normalize().resolve(name));
-        } catch (Exception e) {
-            throw ApiException.notFound("The photo file is missing on the server.");
-        }
-    }
-
-    @Value("${app.upload-dir}")
-    private String uploadDir;
+    private byte[] readStored(String url) { return files.read(url); }
 }

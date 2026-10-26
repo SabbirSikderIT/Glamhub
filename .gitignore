@@ -22,3 +22,8 @@ tools/seed-demo/shortlist*.json
 tools/seed-demo/accepted.json
 tools/seed-demo/*.err
 tools/seed-demo/node_modules/
+
+tools/cloudinary-migrate.sql
+
+glamhub-data.sql
+*.dump

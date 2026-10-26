@@ -7,6 +7,7 @@ import ArtistCard from '../components/ArtistCard.jsx'
 import { LOOK_PRESETS } from '../components/FaceArt.jsx'
 import { Sparkle } from '../components/Icons.jsx'
 import { BUDGETS, CATEGORIES } from '../utils/format.js'
+import { optimize } from '../utils/cdn.js'
 import { getDistricts, getShowcase, searchArtists } from '../services/api.js'
 
 export default function Home() {
@@ -126,7 +127,7 @@ export default function Home() {
             <div className="flex w-max gap-4" style={{ animation: 'marquee 40s linear infinite' }}>
               {[...showcase, ...showcase].map((s, i) => (
                 <Link key={`${s.id}-${i}`} to={`/artists/${s.artistId}`} className="block h-44 w-36 shrink-0 overflow-hidden rounded-2xl shadow-card">
-                  <img src={s.imageUrl} alt={s.caption || `Work by ${s.artistName}`} className="h-full w-full object-cover" loading="lazy" />
+                  <img src={optimize(s.imageUrl, 320)} alt={s.caption || `Work by ${s.artistName}`} className="h-full w-full object-cover" loading="lazy" />
                 </Link>
               ))}
             </div>

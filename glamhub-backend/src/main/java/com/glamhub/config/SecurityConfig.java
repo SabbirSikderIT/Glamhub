@@ -36,9 +36,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, CorsConfigurationSource corsSource) throws Exception {
         http.csrf(c -> c.disable())
-            .cors(c -> c.configurationSource(corsSource()))
+            .cors(c -> c.configurationSource(corsSource))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(e -> e
                 .authenticationEntryPoint((req, res, ex) -> writeJson(res, 401, "Please log in to continue."))
@@ -73,7 +73,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public CorsConfigurationSource corsSource() {
+    public CorsConfigurationSource corsSource(@org.springframework.beans.factory.annotation.Value("${app.frontend-url}") String frontendUrl,
+                                              @org.springframework.beans.factory.annotation.Value("${app.cors-origins:}") String extraOrigins) {
         // Payment gateways post from their own domain; these routes need open CORS and must be registered first.
         CorsConfiguration open = new CorsConfiguration();
         open.setAllowedOriginPatterns(List.of("*"));
@@ -85,6 +86,11 @@ public class SecurityConfig {
         app.setAllowedOriginPatterns(List.of(
                 "http://localhost:*", "http://127.0.0.1:*",
                 "http://192.168.*.*:*", "http://10.*.*.*:*", "http://172.16.*.*:*"));
+        // the deployed frontend (and any extra configured origins) may call the API too
+        List<String> origins = new java.util.ArrayList<>(app.getAllowedOriginPatterns());
+        origins.add(frontendUrl.replaceAll("/+$", ""));
+        for (String o : extraOrigins.split(",")) if (!o.isBlank()) origins.add(o.trim().replaceAll("/+$", ""));
+        app.setAllowedOriginPatterns(origins);
         app.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         app.setAllowedHeaders(List.of("*"));
         app.setAllowCredentials(true);

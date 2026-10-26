@@ -5,6 +5,7 @@ import AvailabilityCalendar from '../components/AvailabilityCalendar.jsx'
 import { BlueCheckIcon } from '../components/Icons.jsx'
 import { Empty, ErrorBox, Loading, StarRating } from '../components/Widgets.jsx'
 import { BUDGETS, CATEGORIES, money, prettyDate } from '../utils/format.js'
+import { optimize } from '../utils/cdn.js'
 import {
   errorMessage, getArtist, getArtistAvailability, getArtistPackages, getArtistPortfolio, getArtistReviews,
 } from '../services/api.js'
@@ -78,7 +79,7 @@ export default function ArtistProfile() {
           <div className="columns-2 gap-3 md:columns-3">
             {visible.map((p) => (
               <button key={p.id} type="button" onClick={() => setLightbox(p)} className="mb-3 block w-full overflow-hidden rounded-2xl">
-                <img src={p.imageUrl} alt={p.caption || `${CATEGORIES[p.category]} makeup by ${artist.name}`} className="w-full transition-transform duration-500 hover:scale-105" loading="lazy" />
+                <img src={optimize(p.imageUrl, 700)} alt={p.caption || `${CATEGORIES[p.category]} makeup by ${artist.name}`} className="w-full transition-transform duration-500 hover:scale-105" loading="lazy" />
               </button>
             ))}
           </div>
@@ -128,7 +129,7 @@ export default function ArtistProfile() {
 
       {lightbox && (
         <div className="fixed inset-0 z-[90] flex items-center justify-center bg-black/80 p-4" onClick={() => setLightbox(null)} role="dialog" aria-modal="true">
-          <img src={lightbox.imageUrl} alt={lightbox.caption || ''} className="max-h-[90vh] max-w-full rounded-2xl" />
+          <img src={optimize(lightbox.imageUrl, 1400)} alt={lightbox.caption || ''} className="max-h-[90vh] max-w-full rounded-2xl" />
         </div>
       )}
     </div>

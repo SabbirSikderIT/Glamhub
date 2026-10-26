@@ -4,6 +4,7 @@ import FaceArt from '../../components/FaceArt.jsx'
 import { Empty, ErrorBox, Field, Loading, Modal, Notice, StatusChip } from '../../components/Widgets.jsx'
 import { useMainAdmin } from './AdminLayout.jsx'
 import { STATUS_TINT, money, prettyDateTime } from '../../utils/format.js'
+import { optimize } from '../../utils/cdn.js'
 import { StarRating } from '../../components/Widgets.jsx'
 import * as api from '../../services/api.js'
 
@@ -115,7 +116,7 @@ export function AdminPhotos() {
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {list?.slice(0, limit).map((p) => (
                 <article key={p.id} className="card overflow-hidden">
-                  <img src={p.imageUrl} alt={p.caption || 'Portfolio photo'} className="aspect-[4/3] w-full object-cover" loading="lazy" />
+                  <img src={optimize(p.imageUrl, 500)} alt={p.caption || 'Portfolio photo'} className="aspect-[4/3] w-full object-cover" loading="lazy" />
                   <div className="space-y-2 p-3 text-sm">
                     <div className="flex items-center justify-between"><strong>{p.artistName}</strong><StatusChip status={p.verificationStatus} tintMap={STATUS_TINT} /></div>
                     {p.detectraConfidence != null && <p className="text-xs text-ink-muted">Detectra v3: {p.detectraVerdict} ({Math.round(p.detectraConfidence * 100)}% AI)</p>}
@@ -208,7 +209,7 @@ export function AdminLooks() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {data?.map((l) => (
           <div key={l.id} className="card overflow-hidden">
-            {l.imageUrl ? <img src={l.imageUrl} alt={l.title} className="aspect-[5/4] w-full object-cover" /> : <FaceArt preset="natural" look={{ lip: l.lipColor || undefined, eye: l.eyeColor || undefined, blush: l.blushColor || undefined }} className="aspect-[5/4] w-full object-cover" title={l.title} />}
+            {l.imageUrl ? <img src={optimize(l.imageUrl, 600)} alt={l.title} className="aspect-[5/4] w-full object-cover" /> : <FaceArt preset="natural" look={{ lip: l.lipColor || undefined, eye: l.eyeColor || undefined, blush: l.blushColor || undefined }} className="aspect-[5/4] w-full object-cover" title={l.title} />}
             <div className="space-y-2 p-4">
               <h3 className="font-semibold">{l.title} <span className="chip bg-[#f3ecfd] text-[#5b3fb5]">{l.level}</span></h3>
               <div className="flex flex-wrap gap-2">

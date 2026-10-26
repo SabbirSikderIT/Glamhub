@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom'
 import { BlueCheckIcon } from './Icons.jsx'
 import { StarRating } from './Widgets.jsx'
 import { BUDGETS, initials, money } from '../utils/format.js'
+import { optimize } from '../utils/cdn.js'
 
 export function Avatar({ name, url, size = 'h-16 w-16 text-xl' }) {
   return url ? (
-    <img src={url} alt="" className={`${size} rounded-full object-cover ring-2 ring-border`} />
+    <img src={optimize(url, 240)} alt="" className={`${size} rounded-full object-cover ring-2 ring-border`} />
   ) : (
     <span className={`${size} flex items-center justify-center rounded-full bg-brand font-display font-bold`} aria-hidden="true">{initials(name)}</span>
   )
