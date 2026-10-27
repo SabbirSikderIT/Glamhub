@@ -6,7 +6,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const API = process.env.API || 'https://glamhub-backend-g0q4.onrender.com/api,http://localhost:8080/api'
+const API = process.env.API || 'https://glamhub-backend-g0q4.onrender.com/api'
 const here = path.dirname(fileURLToPath(import.meta.url))
 const POOL = JSON.parse(fs.readFileSync(path.join(here, 'pool.json'), 'utf8'))
 const CATS = ['BRIDAL', 'CASUAL', 'PARTY', 'EDITORIAL']
