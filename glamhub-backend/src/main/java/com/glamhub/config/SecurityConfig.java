@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .accessDeniedHandler((req, res, ex) -> writeJson(res, 403, "You don't have access to do that.")))
             .authorizeHttpRequests(a -> a
                 // order matters: first match wins
-                .requestMatchers("/api/auth/**", "/api/otp/**", "/uploads/**", "/api/chatbot/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/otp/**", "/uploads/**", "/api/chatbot/**", "/api/health").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/ai-chat/messages", "/api/ai-chat/transcribe").permitAll()
                 .requestMatchers("/api/ai-chat/**").authenticated()
                 .requestMatchers("/api/blue-badge/payment/**").permitAll()
